@@ -334,6 +334,7 @@ class _dashboardState extends State<dashboard> {
     setupMqttClient();
     setupUpdatesListener();
     super.initState();
+
     // manager.connect();
     //  MQTTManager._client.connect();
     // connect(

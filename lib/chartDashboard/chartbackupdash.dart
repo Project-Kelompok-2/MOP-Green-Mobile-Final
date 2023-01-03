@@ -3,11 +3,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mop_green/pages/MqttConnection.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as chart;
 import 'dart:math' as math;
 import 'package:mop_green/shared/shared.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:intl/intl.dart';
 
 import '../pages/MqttConnectionChart.dart';
 
@@ -19,53 +19,12 @@ class room1 extends StatefulWidget {
 }
 
 class _room1State extends State<room1> {
-  List<LiveData> chartData = <LiveData>[
-    LiveData(0, 0),
-    LiveData(1, 0),
-    LiveData(2, 0),
-    LiveData(3, 0),
-    LiveData(4, 0),
-    LiveData(5, 0),
-    LiveData(6, 0),
-    LiveData(7, 0),
-    LiveData(8, 0),
-    LiveData(9, 0),
-    LiveData(10, 0),
-    LiveData(11, 0),
-    LiveData(12, 0),
-    LiveData(13, 0),
-    LiveData(14, 0),
-    LiveData(15, 0),
-    LiveData(16, 0),
-    LiveData(17, 0),
-    LiveData(18, 0),
-  ];
-  List<LiveData> chartData1 = <LiveData>[
-    LiveData(0, 0),
-    LiveData(1, 0),
-    LiveData(2, 0),
-    LiveData(3, 0),
-    LiveData(4, 0),
-    LiveData(5, 0),
-    LiveData(6, 0),
-    LiveData(7, 0),
-    LiveData(8, 0),
-    LiveData(9, 0),
-    LiveData(10, 0),
-    LiveData(11, 0),
-    LiveData(12, 0),
-    LiveData(13, 0),
-    LiveData(14, 0),
-    LiveData(15, 0),
-    LiveData(16, 0),
-    LiveData(17, 0),
-    LiveData(18, 0),
-  ];
-  MQTTClientManagerChart mqttClientManager = MQTTClientManagerChart();
+  late List<LiveData> chartData;
+  late List<LiveData> chartData1;
   late chart.ChartSeriesController _chartSeriesController;
   late chart.ChartSeriesController _chartSeriesController1;
-  int time = 19;
 
+  //connect mqtt
   Future<void> setupMqttClient() async {
     await mqttClientManager.connect();
     mqttClientManager.subscribe("sensor");
@@ -78,16 +37,66 @@ class _room1State extends State<room1> {
       final recMess = c![0].payload as MqttPublishMessage;
       final pt = jsonDecode(
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message));
-      updateDataSource(pt["humadity1"], pt["temp1"]);
+      // print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n'));
+      // chartData = chartData.reversed
+      //     .toList()
+      //     .asMap()
+      //     .entries
+      //     .where((element) => element.key < 19)
+      //     .map((e) => e.value)
+      //     .toList()
+      //     .reversed
+      //     .toList();
+      int time = 19;
+      // chartData.add(LiveData(chartData.length - 1, pt["temp1"]));
+      chartData.add(LiveData(time++, pt["temp1"]));
+      chartData.removeAt(0);
+      _chartSeriesController.updateDataSource(
+          addedDataIndex: chartData.length - 1, removedDataIndex: 0);
+      // print(chartData);
+      //   pt["temp1"]
+      // ;
+      // chartData1 = chartData1.reversed
+      //     .toList()
+      //     .asMap()
+      //     .entries
+      //     .where((element) => element.key < 19)
+      //     .map((e) => e.value)
+      //     .toList()
+      //     .reversed
+      //     .toList();
+
+      // chartData1.add(LiveData(chartData1.length - 1, pt["humadity1"]));
+      chartData1.add(LiveData(time++, pt["humadity1"]));
+      chartData1.removeAt(0);
+      _chartSeriesController1.updateDataSource(
+          addedDataIndex: chartData1.length - 1, removedDataIndex: 0);
+
+      // setState(() {
+      //   suhu = jsonDecode(pt)["temp1"];
+      //   kelembapan = jsonDecode(pt)["humadity1"];
+      // }
+      // );
     });
   }
+
+  MQTTClientManagerChart mqttClientManager = MQTTClientManagerChart();
 
   @override
   void initState() {
     setupMqttClient().then((value) {
       setupUpdatesListener();
     });
-
+    chartData = getChartData();
+    chartData1 = getChartData2();
+    // setupUpdatesListener();
+    // chartData = getChartData();
+    // chartData1 = getChartData2();
+    //
+    // Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+    //   // print(timer);
+    // });
+    // Timer.periodic(const Duration(seconds: 5), setupUpdatesListener);
     super.initState();
   }
 
@@ -106,7 +115,7 @@ class _room1State extends State<room1> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    'Room',
+                    'Room 1',
                     style: meTextStyle.copyWith(
                       color: Colors.black,
                     ),
@@ -164,9 +173,7 @@ class _room1State extends State<room1> {
                   majorGridLines: const chart.MajorGridLines(width: 0),
                   edgeLabelPlacement: chart.EdgeLabelPlacement.shift,
                   interval: 1,
-                  title: chart.AxisTitle(
-                      text: DateFormat('E d MMMM, yyyy – kk:mm:ss')
-                          .format(DateTime.now()))),
+                  title: chart.AxisTitle(text: 'time(seconds)')),
               primaryYAxis: chart.NumericAxis(
                 axisLine: const chart.AxisLine(width: 0),
                 majorTickLines: const chart.MajorTickLines(size: 0),
@@ -178,16 +185,78 @@ class _room1State extends State<room1> {
     );
   }
 
-  void updateDataSource(int value, int value2) {
-    chartData.add(LiveData(time++, value));
-    chartData.removeAt(0);
-    _chartSeriesController.updateDataSource(
-        addedDataIndex: chartData.length - 1, removedDataIndex: 0);
-    chartData1.add(LiveData(time++, value2));
-    chartData1.removeAt(0);
-    _chartSeriesController1.updateDataSource(
-        addedDataIndex: chartData1.length - 1, removedDataIndex: 0);
-  }
+  // int time = 19;
+  // void updateDataoldSource(Timer timer) {
+  //   chartData.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
+  //   chartData.removeAt(0);
+  //   _chartSeriesController.updateDataSource(
+  //       addedDataIndex: chartData.length - 1, removedDataIndex: 0);
+  //   chartData1.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
+  //   chartData1.removeAt(0);
+  //   _chartSeriesController1.updateDataSource(
+  //       addedDataIndex: chartData1.length - 1, removedDataIndex: 0);
+  // }
+
+  //new update data
+  //
+  // void updateDataSource(Timer timer) {
+  //   chartData.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
+  //   chartData.removeAt(0);
+  //   _chartSeriesController.updateDataSource(
+  //       addedDataIndex: chartData.length - 1, removedDataIndex: 0);
+  //   chartData1.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
+  //   chartData1.removeAt(0);
+  //   _chartSeriesController1.updateDataSource(
+  //       addedDataIndex: chartData1.length - 1, removedDataIndex: 0);
+  // }
+}
+
+List<LiveData> getChartData() {
+  return <LiveData>[
+    LiveData(0, 45),
+    LiveData(1, 47),
+    LiveData(2, 43),
+    LiveData(3, 49),
+    LiveData(4, 54),
+    LiveData(5, 41),
+    LiveData(6, 58),
+    LiveData(7, 51),
+    LiveData(8, 98),
+    LiveData(9, 41),
+    LiveData(10, 53),
+    LiveData(11, 72),
+    LiveData(12, 86),
+    LiveData(13, 52),
+    LiveData(14, 94),
+    LiveData(15, 92),
+    LiveData(16, 86),
+    LiveData(17, 72),
+    LiveData(18, 94),
+  ];
+}
+
+List<LiveData> getChartData2() {
+  return <LiveData>[
+    LiveData(0, 44),
+    LiveData(1, 45),
+    LiveData(2, 46),
+    LiveData(3, 47),
+    LiveData(4, 31),
+    LiveData(5, 32),
+    LiveData(6, 34),
+    LiveData(7, 30),
+    LiveData(8, 30),
+    LiveData(9, 50),
+    LiveData(10, 51),
+    LiveData(11, 53),
+    LiveData(12, 56),
+    LiveData(13, 44),
+    LiveData(14, 46),
+    LiveData(15, 92),
+    LiveData(16, 95),
+    LiveData(17, 78),
+    LiveData(18, 60),
+  ];
 }
 
 class LiveData {

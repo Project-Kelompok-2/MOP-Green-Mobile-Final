@@ -31,6 +31,7 @@ class _profilPageState extends State<profilPage> {
     s_prefs = await SharedPreferences.getInstance();
     setState(() {
       datauser = s_prefs.getString("KEY_1").toString();
+      print(datauser);
       // print(datauser);
       id = (jsonDecode(datauser)['id']).toString();
       namaDepan = (jsonDecode(datauser)['nama_depan']).toString();
@@ -483,9 +484,11 @@ class _profilPageState extends State<profilPage> {
     print(namaDepan);
     try {
       var data = {"id": id, "nama_depan": namaDepan};
-      String uri = "http://mopgreen.my.id/apiapiupdatefn.php";
+      String uri = "http://159.223.72.149/apiapiupdatefn.php";
       var res = await http.post(Uri.parse(uri), body: json.encode(data));
+      print(res.body);
       var response = jsonDecode(res.body);
+      print(response);
       if (response["success"] == true) {
         print("data berhasil dihapus");
       } else {
@@ -501,7 +504,7 @@ class _profilPageState extends State<profilPage> {
     print(namaBelakang);
     try {
       var data = {"id": id, "nama_belakang": namaBelakang};
-      String uri = "http://mopgreen.my.id/apiapiupdateln.php";
+      String uri = "http://159.223.72.149/apiapiupdateln.php";
       var res = await http.post(Uri.parse(uri), body: json.encode(data));
       var response = jsonDecode(res.body);
       if (response["success"] == true) {
@@ -519,7 +522,7 @@ class _profilPageState extends State<profilPage> {
     print(asalInstitusi);
     try {
       var data = {"id": id, "asal_institusi": asalInstitusi};
-      String uri = "http://mopgreen.my.id/apiapiupdateasalins.php";
+      String uri = "http://159.223.72.149/apiapiupdateasalins.php";
       var res = await http.post(Uri.parse(uri), body: json.encode(data));
       var response = jsonDecode(res.body);
       if (response["success"] == true) {
@@ -537,7 +540,7 @@ class _profilPageState extends State<profilPage> {
     print(kegiatan);
     try {
       var data = {"id": id, "kegiatan": kegiatan};
-      String uri = "http://mopgreen.my.id/apiapiupdatekeg.php";
+      String uri = "http://159.223.72.149/apiapiupdatekeg.php";
       var res = await http.post(Uri.parse(uri), body: json.encode(data));
       var response = jsonDecode(res.body);
       if (response["success"] == true) {
@@ -555,7 +558,7 @@ class _profilPageState extends State<profilPage> {
     print(email);
     try {
       var data = {"id": id, "email": email};
-      String uri = "http://mopgreen.my.id/apiapiupdateemail.php";
+      String uri = "http://159.223.72.149/apiapiupdateemail.php";
       var res = await http.post(Uri.parse(uri), body: json.encode(data));
       var response = jsonDecode(res.body);
       if (response["success"] == true) {

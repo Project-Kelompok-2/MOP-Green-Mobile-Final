@@ -214,26 +214,26 @@ class _BottomSheetRegisterState extends State<BottomSheetRegister> {
                   Padding(
                     padding: EdgeInsets.only(
                         bottom: mediaQueryData.viewInsets.bottom),
-                    child: TextField(
-                        controller: regispasswordController,
-                        obscureText: _isHiddenConfrimPassword,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          hintText: "Confirm Password",
-                          labelText: "Confirm Password",
-                          suffixIcon: IconButton(
-                              icon: Icon(_isHiddenConfrimPassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                              onPressed: () {
-                                setState(() {
-                                  _isHiddenConfrimPassword =
-                                      !_isHiddenConfrimPassword;
-                                });
-                              }),
-                        )),
+                    // child: TextField(
+                    //     controller: regispasswordController,
+                    //     obscureText: _isHiddenConfrimPassword,
+                    //     decoration: InputDecoration(
+                    //       border: OutlineInputBorder(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //       ),
+                    //       hintText: "Confirm Password",
+                    //       labelText: "Confirm Password",
+                    //       suffixIcon: IconButton(
+                    //           icon: Icon(_isHiddenConfrimPassword
+                    //               ? Icons.visibility_off
+                    //               : Icons.visibility),
+                    //           onPressed: () {
+                    //             setState(() {
+                    //               _isHiddenConfrimPassword =
+                    //                   !_isHiddenConfrimPassword;
+                    //             });
+                    //           }),
+                    //     )),
                   ),
                   const SizedBox(
                     height: 10,
